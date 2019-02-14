@@ -16,10 +16,8 @@ namespace CheckPdfFileLife
             _PdfChecker = new PdfChecker();
             _PdfChecker.programInfo();
             _PdfChecker.getUserInputs();
-            
+
         }
-
-
     }
 
     public class PdfChecker
@@ -71,7 +69,7 @@ namespace CheckPdfFileLife
                 Clear();
                 Sweep();
             }
-            else if(cUserChoice.Equals('N') || cUserChoice.Equals('n'))
+            else if (cUserChoice.Equals('N') || cUserChoice.Equals('n'))
             {
                 bSinglePath = false;
                 Clear();
@@ -88,7 +86,7 @@ namespace CheckPdfFileLife
         /// Fetch pdf directory path from user.
         /// </summary>
         private void getDirectory()
-        { 
+        {
             try
             {
                 WriteLine("\nPlease enter pdf directory.");
@@ -117,7 +115,7 @@ namespace CheckPdfFileLife
 
             if (lsPDF_FilesPaths.Count > 0)
             {
-                
+
                 dWastedSpace = 0;
                 WriteLine("PDF Sweeping Process has started..Please wait.");
                 WriteLine("The expected time to finish the process depends on..\nthe number of files in the given directory.");
@@ -137,8 +135,8 @@ namespace CheckPdfFileLife
                 WriteLine("=================================================");
 
                 WriteLine();
-                
-                if(lsCorrupted.Count>0)
+
+                if (lsCorrupted.Count > 0)
                 {
                     WriteLine("Do you want to Delete corrupted PDF files? (Y/N)");
                     char cUserChoice = ReadKey().KeyChar;
@@ -146,10 +144,23 @@ namespace CheckPdfFileLife
                     if (cUserChoice.Equals('Y') || cUserChoice.Equals('y'))
                     {
                         deleteCorruptedFiles();
+                        WriteLine("=================================================");
+                        WriteLine(lsCorrupted.Count.ToString() + " have been deleted successfully");
+                        WriteLine("=================================================");
+                    }
+                    else
+                    {
+                        WriteLine("=================================================");
+                        WriteLine("Total wasted space :" + toFileSize(dWastedSpace) +", Your files remained safe.");
+                        WriteLine("=================================================");
                     }
                 }
-
-
+                else
+                {
+                    WriteLine("=================================================");
+                    WriteLine("There is no corrupted PDF files in given dir/directories");
+                    WriteLine("=================================================");
+                }
             }
             else
             {
@@ -159,7 +170,7 @@ namespace CheckPdfFileLife
 
         private void deleteCorruptedFiles()
         {
-            if(lsCorrupted.Count > 0)
+            if (lsCorrupted.Count > 0)
             {
                 foreach (var item in lsCorrupted)
                 {
@@ -170,7 +181,7 @@ namespace CheckPdfFileLife
             {
                 WriteLine("There is no corrupted pdf files in given path/paths.");
             }
-           
+
         }
         /// <summary>
         /// Get PDF Directories from User.
@@ -240,7 +251,7 @@ namespace CheckPdfFileLife
             lsPDF_FilesPaths = new List<string>();
             WriteLine("PDF Fetching Files Process has started successfully.");
 
-            foreach (var strDir in lsDirectories)            
+            foreach (var strDir in lsDirectories)
                 lsPDF_FilesPaths.InsertRange(0, Directory.GetFiles(strDirectory, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList());
 
             WriteLine("PDF Fetching Files Process has finished successfully.");
