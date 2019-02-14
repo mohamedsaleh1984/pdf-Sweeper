@@ -166,6 +166,11 @@ namespace CheckPdfFileLife
             {
                 WriteLine("There is no pdf files in selected path/paths.");
             }
+            WriteLine();
+            WriteLine("=================================================");
+            WriteLine("Hope you enjoyed using the program.");
+            WriteLine("=================================================");
+            ReadLine();
         }
 
         private void deleteCorruptedFiles()
@@ -231,7 +236,7 @@ namespace CheckPdfFileLife
         /// <returns></returns>
         public List<String> getPdfFilesFromDirectory()
         {
-            WriteLine("PDF Fetching Files Process has started successfully.");
+            WriteLine("\nPDF Fetching Files Process has started successfully.");
 
             lsPDF_FilesPaths = new List<string>();
             lsPDF_FilesPaths = Directory.GetFiles(strDirectory, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList();
@@ -249,10 +254,10 @@ namespace CheckPdfFileLife
         public List<String> getPdfFilesFromDirectories()
         {
             lsPDF_FilesPaths = new List<string>();
-            WriteLine("PDF Fetching Files Process has started successfully.");
+            WriteLine("\nPDF Fetching Files Process has started successfully.");
 
             foreach (var strDir in lsDirectories)
-                lsPDF_FilesPaths.InsertRange(0, Directory.GetFiles(strDirectory, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList());
+                lsPDF_FilesPaths.InsertRange(0, Directory.GetFiles(strDir, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList());
 
             WriteLine("PDF Fetching Files Process has finished successfully.");
 
