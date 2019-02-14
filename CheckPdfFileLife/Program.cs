@@ -117,7 +117,7 @@ namespace CheckPdfFileLife
 
             if (lsPDF_FilesPaths.Count > 0)
             {
-                Clear();
+                
                 dWastedSpace = 0;
                 WriteLine("PDF Sweeping Process has started..Please wait.");
                 foreach (var strFilePath in lsPDF_FilesPaths)
@@ -189,7 +189,7 @@ namespace CheckPdfFileLife
         /// <returns></returns>
         public List<String> getPdfFilesFromDirectory()
         {
-            WriteLine("PDF Fetching Files Process has finished successfully.");
+            WriteLine("PDF Fetching Files Process has started successfully.");
 
             lsPDF_FilesPaths = new List<string>();
             lsPDF_FilesPaths = Directory.GetFiles(strDirectory, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList();
@@ -207,7 +207,7 @@ namespace CheckPdfFileLife
         public List<String> getPdfFilesFromDirectories()
         {
             lsPDF_FilesPaths = new List<string>();
-            WriteLine("PDF Fetching Files Process has finished successfully.");
+            WriteLine("PDF Fetching Files Process has started successfully.");
 
             foreach (var strDir in lsDirectories)            
                 lsPDF_FilesPaths.InsertRange(0, Directory.GetFiles(strDirectory, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList());
