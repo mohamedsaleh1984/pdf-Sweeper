@@ -137,7 +137,17 @@ namespace CheckPdfFileLife
                 WriteLine("=================================================");
 
                 WriteLine();
+                
+                if(lsCorrupted.Count>0)
+                {
+                    WriteLine("Do you want to Delete corrupted PDF files? (Y/N)");
+                    char cUserChoice = ReadKey().KeyChar;
 
+                    if (cUserChoice.Equals('Y') || cUserChoice.Equals('y'))
+                    {
+                        deleteCorruptedFiles();
+                    }
+                }
 
 
             }
