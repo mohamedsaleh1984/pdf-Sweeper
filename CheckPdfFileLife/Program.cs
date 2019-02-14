@@ -140,26 +140,38 @@ namespace CheckPdfFileLife
 
                 if (lsCorrupted.Count > 0)
                 {
-                    WriteLine("Do you want to Delete corrupted PDF files? (Y/N)");
+                    WriteLine("1) Do you want to Delete corrupted PDF files?");
+                    WriteLine("2) Do you want to Delete corrupted PDF files and Export their names?");
+                    WriteLine("3) Do you want to Export their names?");
+                    WriteLine("4) Leave everything as it is.");
+                    WriteLine("");
+
+
                     char cUserChoice = ReadKey().KeyChar;
 
-                    if (cUserChoice.Equals('Y') || cUserChoice.Equals('y'))
+                    if (cUserChoice.Equals('1'))
+                    {
+                        DeleteCorruptedFiles();                  
+                    }
+                    else if (cUserChoice.Equals('2'))
                     {
                         DeleteCorruptedFiles();
-                        WriteLine("=================================================");
-                        WriteLine(lsCorrupted.Count.ToString() + " have been deleted successfully");
-                        WriteLine("=================================================");
+                        ExportCorruptedFilesNames();
                     }
-                    else
+                    else if (cUserChoice.Equals('3'))
                     {
-                        WriteLine("=================================================");
-                        WriteLine("Total wasted space :" + toFileSize(dWastedSpace) +", Your files remained safe.");
-                        WriteLine("=================================================");
+                        ExportCorruptedFilesNames();
+                    }
+                    else if (cUserChoice.Equals('4'))
+                    {
+                        WriteLine("\n=================================================");
+                        WriteLine("Total wasted space :" + toFileSize(dWastedSpace) + ", Your files remained safe.");
+                        WriteLine("======================================================");
                     }
                 }
                 else
                 {
-                    WriteLine("=================================================");
+                    WriteLine("\n=================================================");
                     WriteLine("There is no corrupted PDF files in given dir/directories");
                     WriteLine("=================================================");
                 }
@@ -169,7 +181,7 @@ namespace CheckPdfFileLife
                 WriteLine("There is no pdf files in selected path/paths.");
             }
             WriteLine();
-            WriteLine("=================================================");
+            WriteLine("\n=================================================");
             WriteLine("Hope you enjoyed using the program.");
             WriteLine("=================================================");
             ReadLine();
@@ -188,6 +200,11 @@ namespace CheckPdfFileLife
                     stringBuilder.AppendLine(Path.GetFileName(item));
 
                 File.WriteAllText("Exported.txt", stringBuilder.ToString());
+
+                WriteLine("\n=================================================");
+                WriteLine("Exported.txt has been generated.");
+                WriteLine("=================================================");
+
             }
             else
             {
@@ -204,6 +221,12 @@ namespace CheckPdfFileLife
             {
                 foreach (var item in lsCorrupted)
                     File.Delete(item);
+
+                WriteLine("\n======================================================");
+                WriteLine(lsCorrupted.Count.ToString() + " have been deleted successfully");
+                WriteLine("=================================================");
+                WriteLine("Total freed space :" + toFileSize(dWastedSpace));
+                WriteLine("======================================================");
             }
             else
             {
