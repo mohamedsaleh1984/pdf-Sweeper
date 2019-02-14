@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using static System.Console;
 using System.Linq;
-
+using System.Text;
 
 namespace CheckPdfFileLife
 {
@@ -173,6 +173,26 @@ namespace CheckPdfFileLife
             WriteLine("Hope you enjoyed using the program.");
             WriteLine("=================================================");
             ReadLine();
+        }
+
+        /// <summary>
+        /// Export Corrupted Files Names.
+        /// </summary>
+        public void ExportCorruptedFilesNames()
+        {
+            if (lsCorrupted.Count > 0)
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                foreach (var item in lsCorrupted)
+                    stringBuilder.AppendLine(Path.GetFileName(item));
+
+                File.WriteAllText("Exported.txt", stringBuilder.ToString());
+            }
+            else
+            {
+                WriteLine("There is no corrupted pdf files in given path/paths.");
+            }
         }
 
         /// <summary>
