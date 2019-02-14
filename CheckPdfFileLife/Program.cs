@@ -15,6 +15,7 @@ namespace CheckPdfFileLife
         {
             _PdfChecker = new PdfChecker();
             _PdfChecker.programInfo();
+            _PdfChecker.getUserInputs();
             
         }
 
@@ -26,6 +27,10 @@ namespace CheckPdfFileLife
         private string strDirectory;
         private List<string> lsDirectories;
         private List<String> lsPDF_FilesPaths;
+        private bool bSinglePath;
+        private List<String> lsCorrupted;
+        private double dWastedSpace;
+
 
         /// <summary>
         /// Constructor.
@@ -35,6 +40,8 @@ namespace CheckPdfFileLife
             strDirectory = "";
             lsDirectories = new List<string>();
             lsPDF_FilesPaths = new List<string>();
+            lsCorrupted = new List<string>();
+            dWastedSpace = 0;
         }
 
         /// <summary>
@@ -49,17 +56,98 @@ namespace CheckPdfFileLife
             WriteLine("\t\t\tE-mail: mohamedsaleh1984@hotmail.com\n\n");
         }
 
-        public void getUserInput()
+        /// <summary>
+        /// Get PDF Dir or Dirs from user.
+        /// </summary>
+        public void getUserInputs()
         {
+            WriteLine("Do you want to Sweep single directory? (Y/N)");
+            char cUserChoice = ReadKey().KeyChar;
 
+            if (cUserChoice.Equals('Y') || cUserChoice.Equals('y'))
+            {
+                getDirectory();
+                bSinglePath = true;
+                Clear();
+                Sweep();
+            }
+            else if(cUserChoice.Equals('N') || cUserChoice.Equals('n'))
+            {
+                bSinglePath = false;
+                Clear();
+                getDirectoriesFromUser();
+                Sweep();
+            }
+            else
+            {
+                Write("not valid value.");
+            }
         }
+
+        /// <summary>
+        /// Fetch pdf directory path from user.
+        /// </summary>
+        private void getDirectory()
+        { 
+            try
+            {
+                WriteLine("\nPlease enter pdf directory.");
+                strDirectory = ReadLine();
+                strDirectory = Path.GetFullPath(strDirectory);
+            }
+            catch (Exception)
+            {
+                WriteLine("Not valid path..Sorry !!");
+            }
+        }
+
+        /// <summary>
+        /// Start Sweeping Process
+        /// </summary>
+        public void Sweep()
+        {
+            if (bSinglePath)
+            {
+                getPdfFilesFromDirectory();
+            }
+            else
+            {
+                getPdfFilesFromDirectories();
+            }
+
+            if (lsPDF_FilesPaths.Count > 0)
+            {
+                Clear();
+                dWastedSpace = 0;
+                WriteLine("PDF Sweeping Process has started..Please wait.");
+                foreach (var strFilePath in lsPDF_FilesPaths)
+                {
+                    if (isPDFcorrupted(strFilePath))
+                    {
+                        lsCorrupted.Add(strFilePath);
+                        dWastedSpace += getFileSize(strFilePath);
+                    }
+                }
+                WriteLine("PDF Sweeping Process has finished successfully.");
+
+                WriteLine("=================================================");
+                WriteLine("Total wasted space :" + toFileSize(dWastedSpace));
+                WriteLine("=================================================");
+
+            }
+            else
+            {
+                WriteLine("There is no pdf files in selected path/paths.");
+            }
+        }
+
         /// <summary>
         /// Get PDF Directories from User.
         /// </summary>
         /// <returns></returns>
         private List<String> getDirectoriesFromUser()
         {
-            List<String> dirs = new List<string>();
+            lsDirectories = new List<string>();
             char cUserChoice = '\0';
             string strPath;
             do
@@ -72,7 +160,7 @@ namespace CheckPdfFileLife
                     strPath = Path.GetFullPath(strPath);
                     if (Directory.Exists(strPath))
                     {
-                        dirs.Add(strPath);
+                        lsDirectories.Add(strPath);
                         WriteLine("Do you want to add another path ? (Y/N)");
                         cUserChoice = ReadKey().KeyChar;
                     }
@@ -90,7 +178,7 @@ namespace CheckPdfFileLife
 
             } while (cUserChoice.Equals('y') || cUserChoice.Equals('Y'));
 
-            return dirs;
+            return lsDirectories;
 
         }
 
@@ -101,8 +189,12 @@ namespace CheckPdfFileLife
         /// <returns></returns>
         public List<String> getPdfFilesFromDirectory()
         {
+            WriteLine("PDF Fetching Files Process has finished successfully.");
+
             lsPDF_FilesPaths = new List<string>();
-            lsPDF_FilesPaths = Directory.GetFiles(strDirectory, "*.pdf|*.PDF", SearchOption.AllDirectories).ToList();
+            lsPDF_FilesPaths = Directory.GetFiles(strDirectory, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList();
+
+            WriteLine("PDF Fetching Files Process has finished successfully.");
 
             return lsPDF_FilesPaths;
         }
@@ -112,19 +204,17 @@ namespace CheckPdfFileLife
         /// </summary>
         /// <param name="lsDirectories">Directory List</param>
         /// <returns></returns>
-        public List<String> getPdfFilesFromDirectory(List<String> lsDirectories)
+        public List<String> getPdfFilesFromDirectories()
         {
             lsPDF_FilesPaths = new List<string>();
-            List<String> lsPDF_All_FilesPaths = new List<string>();
-            foreach (var strDir in lsDirectories)
-            {
-                lsPDF_FilesPaths = Directory.GetFiles(strDir, "*.pdf|*.PDF", SearchOption.AllDirectories).ToList();
-                foreach (var item in lsPDF_FilesPaths)
-                {
-                    lsPDF_All_FilesPaths.Add(item);
-                }
-            }
-            return lsPDF_All_FilesPaths;
+            WriteLine("PDF Fetching Files Process has finished successfully.");
+
+            foreach (var strDir in lsDirectories)            
+                lsPDF_FilesPaths.InsertRange(0, Directory.GetFiles(strDirectory, "*.*", SearchOption.AllDirectories).Where(f => f.EndsWith(".pdf") || f.EndsWith(".PDF")).ToList());
+
+            WriteLine("PDF Fetching Files Process has finished successfully.");
+
+            return lsPDF_FilesPaths;
         }
 
         /// <summary>
@@ -150,6 +240,67 @@ namespace CheckPdfFileLife
                 }
             }
             return bResult;
+        }
+
+        /// <summary>
+        /// Return file size.
+        /// </summary>
+        /// <param name="strFilePath"></param>
+        /// <returns></returns>
+        private long getFileSize(string strFilePath)
+        {
+            return new FileInfo(strFilePath).Length; // :D
+        }
+
+        /// <summary>
+        /// eturn a string describing the value as a file size.
+        /// For example, 1.23 MB.
+        /// Ref: http://csharphelper.com/blog/2014/07/format-file-sizes-in-kb-mb-gb-and-so-forth-in-c/
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private string toFileSize(double value)
+        {
+            string[] suffixes = { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
+            for (int i = 0; i < suffixes.Length; i++)
+            {
+                if (value <= (Math.Pow(1024, i + 1)))
+                {
+                    return threeNonZeroDigits(value / Math.Pow(1024, i)) + " " + suffixes[i];
+                }
+            }
+            return threeNonZeroDigits(value / Math.Pow(1024, suffixes.Length - 1)) + " " + suffixes[suffixes.Length - 1];
+        }
+
+        /// <summary>
+        /// Return the value formatted to include at most three
+        /// non-zero digits and at most two digits after the
+        /// decimal point.Examples:
+        /// 1
+        /// 123
+        /// 12.3
+        /// 1.23
+        /// 0.12
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        private string threeNonZeroDigits(double value)
+        {
+            if (value >= 100)
+            {
+                // No digits after the decimal.
+                return value.ToString("0,0");
+            }
+            else if (value >= 10)
+            {
+                // One digit after the decimal.
+                return value.ToString("0.0");
+            }
+            else
+            {
+                // Two digits after the decimal.
+                return value.ToString("0.00");
+            }
         }
     }
 }
