@@ -13,6 +13,8 @@ namespace CheckPdfFileLife
         private static PdfChecker _PdfChecker;
         static void Main(string[] args)
         {
+            ForegroundColor = ConsoleColor.Green;
+
             _PdfChecker = new PdfChecker();
             _PdfChecker.programInfo();
             _PdfChecker.getUserInputs();
