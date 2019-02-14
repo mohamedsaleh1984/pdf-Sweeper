@@ -3,10 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using static System.Console;
-
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace CheckPdfFileLife
 {
@@ -16,10 +14,11 @@ namespace CheckPdfFileLife
         static void Main(string[] args)
         {
             _PdfChecker = new PdfChecker();
-            _PdfChecker.getPdfFilesFromDirectory();
+            _PdfChecker.programInfo();
+            
         }
 
-        
+
     }
 
     public class PdfChecker
@@ -41,15 +40,59 @@ namespace CheckPdfFileLife
         /// <summary>
         /// Tool info.
         /// </summary>
-        public void ProgramInfo()
+        public void programInfo()
         {
-           WriteLine("\t\t\t\tPDF Sweeper");
-           WriteLine("\t\tPDF Sweeper developed to help users cleaning up thier computers from corrupted PDF");
-           WriteLine("\t\tto save some more space.");
-           WriteLine("\t\t\tDeveloped By: Mohamed Abdelaziz");
-           WriteLine("\t\t\tE-mail: mohamedsaleh1984@hotmail.com\n\n");
+            WriteLine("\t\t\t\tPDF Sweeper");
+            WriteLine("\t\tPDF Sweeper developed to help users cleaning up thier computers from corrupted PDF");
+            WriteLine("\t\tto save some more space.");
+            WriteLine("\t\t\tDeveloped By: Mohamed Abdelaziz");
+            WriteLine("\t\t\tE-mail: mohamedsaleh1984@hotmail.com\n\n");
         }
 
+        public void getUserInput()
+        {
+
+        }
+        /// <summary>
+        /// Get PDF Directories from User.
+        /// </summary>
+        /// <returns></returns>
+        private List<String> getDirectoriesFromUser()
+        {
+            List<String> dirs = new List<string>();
+            char cUserChoice = '\0';
+            string strPath;
+            do
+            {
+                cUserChoice = '\0';
+                WriteLine("Please enter directory path.");
+                try
+                {
+                    strPath = ReadLine();
+                    strPath = Path.GetFullPath(strPath);
+                    if (Directory.Exists(strPath))
+                    {
+                        dirs.Add(strPath);
+                        WriteLine("Do you want to add another path ? (Y/N)");
+                        cUserChoice = ReadKey().KeyChar;
+                    }
+                    else
+                    {
+                        throw new Exception("Directory is not exists.");
+                    }
+
+                }
+                catch (IOException)
+                {
+                    WriteLine("Please re-enter directory path.");
+                }
+
+
+            } while (cUserChoice.Equals('y') || cUserChoice.Equals('Y'));
+
+            return dirs;
+
+        }
 
         /// <summary>
         /// Return list of PDF files from given directory and sub directories.
@@ -60,7 +103,7 @@ namespace CheckPdfFileLife
         {
             lsPDF_FilesPaths = new List<string>();
             lsPDF_FilesPaths = Directory.GetFiles(strDirectory, "*.pdf|*.PDF", SearchOption.AllDirectories).ToList();
-          
+
             return lsPDF_FilesPaths;
         }
 
@@ -75,7 +118,7 @@ namespace CheckPdfFileLife
             List<String> lsPDF_All_FilesPaths = new List<string>();
             foreach (var strDir in lsDirectories)
             {
-                lsPDF_FilesPaths =  Directory.GetFiles(strDir, "*.pdf|*.PDF", SearchOption.AllDirectories).ToList();
+                lsPDF_FilesPaths = Directory.GetFiles(strDir, "*.pdf|*.PDF", SearchOption.AllDirectories).ToList();
                 foreach (var item in lsPDF_FilesPaths)
                 {
                     lsPDF_All_FilesPaths.Add(item);
@@ -89,7 +132,7 @@ namespace CheckPdfFileLife
         /// </summary>
         /// <param name="filePath">PDF file Path</param>
         /// <returns>true otherwise; false</returns>
-        public  bool isPDFcorrupted(string filePath)
+        private bool isPDFcorrupted(string filePath)
         {
             bool bResult = false;
             PdfReader reader = null;
