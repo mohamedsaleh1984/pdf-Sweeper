@@ -120,6 +120,8 @@ namespace CheckPdfFileLife
                 
                 dWastedSpace = 0;
                 WriteLine("PDF Sweeping Process has started..Please wait.");
+                WriteLine("The expected time to finish the process depends on..\nthe number of files in the given directory.");
+
                 foreach (var strFilePath in lsPDF_FilesPaths)
                 {
                     if (isPDFcorrupted(strFilePath))
@@ -134,6 +136,10 @@ namespace CheckPdfFileLife
                 WriteLine("Total wasted space :" + toFileSize(dWastedSpace));
                 WriteLine("=================================================");
 
+                WriteLine();
+
+
+
             }
             else
             {
@@ -141,6 +147,21 @@ namespace CheckPdfFileLife
             }
         }
 
+        private void deleteCorruptedFiles()
+        {
+            if(lsCorrupted.Count > 0)
+            {
+                foreach (var item in lsCorrupted)
+                {
+                    File.Delete(item);
+                }
+            }
+            else
+            {
+                WriteLine("There is no corrupted pdf files in given path/paths.");
+            }
+           
+        }
         /// <summary>
         /// Get PDF Directories from User.
         /// </summary>
