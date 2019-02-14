@@ -16,8 +16,8 @@ namespace CheckPdfFileLife
             ForegroundColor = ConsoleColor.Green;
 
             _PdfChecker = new PdfChecker();
-            _PdfChecker.programInfo();
-            _PdfChecker.getUserInputs();
+            _PdfChecker.ProgramInfo();
+            _PdfChecker.GetUserInputs();
 
         }
     }
@@ -47,7 +47,7 @@ namespace CheckPdfFileLife
         /// <summary>
         /// Tool info.
         /// </summary>
-        public void programInfo()
+        public void ProgramInfo()
         {
             WriteLine("\t\t\t\tPDF Sweeper");
             WriteLine("\t\tPDF Sweeper developed to help users cleaning up thier computers from corrupted PDF");
@@ -59,14 +59,14 @@ namespace CheckPdfFileLife
         /// <summary>
         /// Get PDF Dir or Dirs from user.
         /// </summary>
-        public void getUserInputs()
+        public void GetUserInputs()
         {
             WriteLine("Do you want to Sweep single directory? (Y/N)");
             char cUserChoice = ReadKey().KeyChar;
 
             if (cUserChoice.Equals('Y') || cUserChoice.Equals('y'))
             {
-                getDirectory();
+                GetDirectory();
                 bSinglePath = true;
                 Clear();
                 Sweep();
@@ -75,7 +75,7 @@ namespace CheckPdfFileLife
             {
                 bSinglePath = false;
                 Clear();
-                getDirectoriesFromUser();
+                GetDirectoriesFromUser();
                 Sweep();
             }
             else
@@ -87,7 +87,7 @@ namespace CheckPdfFileLife
         /// <summary>
         /// Fetch pdf directory path from user.
         /// </summary>
-        private void getDirectory()
+        private void GetDirectory()
         {
             try
             {
@@ -108,11 +108,11 @@ namespace CheckPdfFileLife
         {
             if (bSinglePath)
             {
-                getPdfFilesFromDirectory();
+                GetPdfFilesFromDirectory();
             }
             else
             {
-                getPdfFilesFromDirectories();
+                GetPdfFilesFromDirectories();
             }
 
             if (lsPDF_FilesPaths.Count > 0)
@@ -124,10 +124,10 @@ namespace CheckPdfFileLife
 
                 foreach (var strFilePath in lsPDF_FilesPaths)
                 {
-                    if (isPDFcorrupted(strFilePath))
+                    if (IsPDFcorrupted(strFilePath))
                     {
                         lsCorrupted.Add(strFilePath);
-                        dWastedSpace += getFileSize(strFilePath);
+                        dWastedSpace += GetFileSize(strFilePath);
                     }
                 }
                 WriteLine("PDF Sweeping Process has finished successfully.");
@@ -145,7 +145,7 @@ namespace CheckPdfFileLife
 
                     if (cUserChoice.Equals('Y') || cUserChoice.Equals('y'))
                     {
-                        deleteCorruptedFiles();
+                        DeleteCorruptedFiles();
                         WriteLine("=================================================");
                         WriteLine(lsCorrupted.Count.ToString() + " have been deleted successfully");
                         WriteLine("=================================================");
@@ -178,7 +178,7 @@ namespace CheckPdfFileLife
         /// <summary>
         /// Delete Corrupted Files
         /// </summary>
-        private void deleteCorruptedFiles()
+        private void DeleteCorruptedFiles()
         {
             if (lsCorrupted.Count > 0)
             {
@@ -195,7 +195,7 @@ namespace CheckPdfFileLife
         /// Get PDF Directories from User.
         /// </summary>
         /// <returns></returns>
-        private List<String> getDirectoriesFromUser()
+        private List<String> GetDirectoriesFromUser()
         {
             lsDirectories = new List<string>();
             char cUserChoice = '\0';
@@ -237,7 +237,7 @@ namespace CheckPdfFileLife
         /// </summary>
         /// <param name="strDir"></param>
         /// <returns></returns>
-        public List<String> getPdfFilesFromDirectory()
+        public List<String> GetPdfFilesFromDirectory()
         {
             WriteLine("\nPDF Fetching Files Process has started successfully.");
 
@@ -254,7 +254,7 @@ namespace CheckPdfFileLife
         /// </summary>
         /// <param name="lsDirectories">Directory List</param>
         /// <returns></returns>
-        public List<String> getPdfFilesFromDirectories()
+        public List<String> GetPdfFilesFromDirectories()
         {
             lsPDF_FilesPaths = new List<string>();
             WriteLine("\nPDF Fetching Files Process has started successfully.");
@@ -272,7 +272,7 @@ namespace CheckPdfFileLife
         /// </summary>
         /// <param name="filePath">PDF file Path</param>
         /// <returns>true otherwise; false</returns>
-        private bool isPDFcorrupted(string filePath)
+        private bool IsPDFcorrupted(string filePath)
         {
             bool bResult = false;
             PdfReader reader = null;
@@ -297,7 +297,7 @@ namespace CheckPdfFileLife
         /// </summary>
         /// <param name="strFilePath"></param>
         /// <returns></returns>
-        private long getFileSize(string strFilePath)
+        private long GetFileSize(string strFilePath)
         {
             return new FileInfo(strFilePath).Length; // :D
         }
@@ -316,10 +316,10 @@ namespace CheckPdfFileLife
             {
                 if (value <= (Math.Pow(1024, i + 1)))
                 {
-                    return threeNonZeroDigits(value / Math.Pow(1024, i)) + " " + suffixes[i];
+                    return ThreeNonZeroDigits(value / Math.Pow(1024, i)) + " " + suffixes[i];
                 }
             }
-            return threeNonZeroDigits(value / Math.Pow(1024, suffixes.Length - 1)) + " " + suffixes[suffixes.Length - 1];
+            return ThreeNonZeroDigits(value / Math.Pow(1024, suffixes.Length - 1)) + " " + suffixes[suffixes.Length - 1];
         }
 
         /// <summary>
@@ -334,7 +334,7 @@ namespace CheckPdfFileLife
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private string threeNonZeroDigits(double value)
+        private string ThreeNonZeroDigits(double value)
         {
             if (value >= 100)
             {
