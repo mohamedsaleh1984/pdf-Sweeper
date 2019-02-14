@@ -175,14 +175,15 @@ namespace CheckPdfFileLife
             ReadLine();
         }
 
+        /// <summary>
+        /// Delete Corrupted Files
+        /// </summary>
         private void deleteCorruptedFiles()
         {
             if (lsCorrupted.Count > 0)
             {
                 foreach (var item in lsCorrupted)
-                {
                     File.Delete(item);
-                }
             }
             else
             {
